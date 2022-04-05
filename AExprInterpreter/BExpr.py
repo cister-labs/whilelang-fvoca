@@ -1,32 +1,35 @@
-from .ImpConsts import *
+#from .ImpConsts import *
+
+AND = 1
+OR  = 2
+NOT = 3
+AEQ = 4
+ALT = 5
+
+def bop2cop(x):
+    if x == AND:
+        return (lambda a,b : a and b)
+    elif x == OR:
+        return (lambda a,b : a or b)
+    elif x == NOT:
+        return (lambda a : not a)
+    elif x == AEQ:
+        return (lambda a,b : a == b)
+    elif x == ALT:
+        return (lambda a,b : a < b)
+    else:
+        raise Exception("Operator not accepted")
+
 
 class ImpBExprAst(object):
-
-    def __init__(self,ty):
-        self.__bexprType = ty
-
-    def getType(self):
-        return self.__bexprType
+    pass
 
 class ImpBExprAstException(Exception):
     pass
 
-class ImpBExprVar(ImpBExprAst):
-
-    def __init__(self,id):
-        super().__init__(BExprCases.BExprVAR)
-        self.__varId = id
-    
-    def value(self):
-        return str(self.__varId)
-        
-    def __str__(self):
-        return "[BExp Var: "+str(self.__varId)+"]"
-
 class ImpBExprVal(ImpBExprAst):
     
     def __init__(self,val):
-        super().__init__(BExprCases.BExprVAL)
         self.__val = val
         
     def value(self):
@@ -38,7 +41,6 @@ class ImpBExprVal(ImpBExprAst):
 class ImpBExprUnary(ImpBExprAst):
 
     def __init__(self,inner):
-        super().__init__(BExprCases.BExprUNARY)
         self.__inner = inner
         
     def inner(self):
@@ -50,7 +52,6 @@ class ImpBExprUnary(ImpBExprAst):
 class ImpBExprBinary(ImpBExprAst):
 
     def __init__(self,op,lnode,rnode):
-        super().__init__(BExprCases.BExprBINARY)
         self.__lnode = lnode
         self.__rnode = rnode
         self.__op = op
