@@ -1,11 +1,15 @@
-#from .ImpConsts import *
+from AExprs import *
 
-AND = 1
-OR  = 2
-NOT = 3
-AEQ = 4
-ALT = 5
+''' Constantes que identificam as operações Booleanas
+    previstas para a linguagem de expressões lógicas. '''
+AND = 4
+OR  = 5
+NOT = 6
+AEQ = 7
+ALT = 8
 
+''' Função de ordem superior que retorna funções que 
+    concretizam operadores lógicos abstratos'''
 def bop2cop(x):
     if x == AND:
         return (lambda a,b : a and b)
@@ -21,13 +25,13 @@ def bop2cop(x):
         raise Exception("Operator not accepted")
 
 
-class ImpBExprAst(object):
+class BExpr(object):
     pass
 
-class ImpBExprAstException(Exception):
+class BExprException(Exception):
     pass
 
-class ImpBExprVal(ImpBExprAst):
+class BExprVal(BExpr):
     
     def __init__(self,val):
         self.__val = val
@@ -38,7 +42,7 @@ class ImpBExprVal(ImpBExprAst):
     def __str__(self):
         return "[BExpr Bool: "+str(self.__val)+"]"
 
-class ImpBExprUnary(ImpBExprAst):
+class BExprUnary(BExpr):
 
     def __init__(self,inner):
         self.__inner = inner
@@ -49,7 +53,7 @@ class ImpBExprUnary(ImpBExprAst):
     def __str__(self):
         return ('[BExpr Unary' + str(self.__inner) + ']')
 
-class ImpBExprBinary(ImpBExprAst):
+class BExprBinary(BExpr):
 
     def __init__(self,op,lnode,rnode):
         self.__lnode = lnode

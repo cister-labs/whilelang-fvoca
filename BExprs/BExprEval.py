@@ -1,26 +1,10 @@
-# from Ast import AExpr, BExpr
-# from Ast.ImpConsts import RELATIONAL_OPS_ARITH, RELATIONAL_OPS_BOOL, AExprCases, BExprCases, AExprOps, BExprOps, arithToOp, relArithToOp, relBoolToOp, bexpToOp
-# from Evaluators import AExprEval
-
-from AExpr import *
-from BExpr import *
-from AExprEval import *
+from AExprs import AExpr, AExprEval
+from BExpr  import *
 
 """ General Exception for Boolean
         Expressions Evaluation """
 class BExprEvalException(Exception):
     pass
-
-''' Função que verifica se o objeto [v] é
-    uma instância de um valor; pode ser 
-    utilizado como condição de paragem do 
-    algoritmo de avaliação. '''
-def isFinal(v):
-    if isinstance(v,ImpAExprVal):
-        return True
-    else:
-        return False
-
 
 """ Evaluation of Boolean expressions """
 class BExprEval:
@@ -28,38 +12,36 @@ class BExprEval:
     def __init__(self,state):
         self.__state   = state
 
-    def one_step_val(self,exp:BExpr.ImpBExprAst):
-        print("Entering one_step_val")
-        # When it is already a value, just return it
-        if  exp.getType() == BExprCases.BExprVAL:
-            return exp
-        else:
-            raise BExprEvalException("Not a value expression")
+    def one_step_val(self,bexp):
+        return bexp
+        # print("Entering one_step_val")
+        # # When it is already a value, just return it
+        # if  exp.getType() == BExprCases.BExprVAL:
+        #     return exp
+        # else:
+        #     raise BExprEvalException("Not a value expression")
 
-    def one_step_var(self,exp:BExpr.ImpBExprAst):
-        print("B: Entering one_step_var")
-        if exp.getType() == BExprCases.BExprVAR:
-            # We are not typechecking anything; it is a TODO
-            if self.__vars[exp.value()] != None:
-                return BExpr.ImpBExprVal(self.__vars[exp.value()][1])
-            elif self.__consts[exp.value()] != None:
-                return BExpr.ImpBExprVal(self.__consts[exp.value()][1])
-            else:
-                raise BExprEvalUndefVar(exp.value())
-        else:
-            raise BExprEvalException("Not a variable expression")
+    # def one_step_var(self,bexp):
+    #     print("B: Entering one_step_var")
+    #     if exp.getType() == BExprCases.BExprVAR:
+    #         # We are not typechecking anything; it is a TODO
+    #         if self.__vars[exp.value()] != None:
+    #             return BExpr.ImpBExprVal(self.__vars[exp.value()][1])
+    #         elif self.__consts[exp.value()] != None:
+    #             return BExpr.ImpBExprVal(self.__consts[exp.value()][1])
+    #         else:
+    #             raise BExprEvalUndefVar(exp.value())
+    #     else:
+    #         raise BExprEvalException("Not a variable expression")
 
-    def one_step_unary(self,exp:BExpr.ImpBExprAst):
+    def one_step_unary(self,exp):
         print("B: Entering one_step_unary")
-        t = exp.inner().getType()
-        if t == BExprCases.BExprVAL:
-            return BExpr.ImpBExprVal(not exp.inner().value())
-        elif t == BExprCases.BExprVAR:
-            e = self.one_step_var(exp.inner())
-            return BExpr.ImpBExprUnary(e)
-        elif t == BExprCases.BExprUNARY:
-            return exp.inner().inner()
-        elif t == BExprCases.BExprBINARY:
+        t = exp.inner()
+        if isinstance(t,BExprVal):
+            return BExprVal(not exp.inner().value())
+        elif isinstance(t,BExprUnary):
+            return BExprUnary(self.one_step_unary(exp.inner().inner()))
+        elif isinstance(t,BExprBinary):
             o = exp.inner().inner_op()
             if o == BExprOps.BExprAND:
                 return BExpr.ImpBExprBinary(
